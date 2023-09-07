@@ -49,9 +49,9 @@ app.get('/todos', async (req, res) => {
 })
 
 //GET para traer una tarea segun su id con params
-app.get('/todos/:id', async (req, res)=>{
+app.get('/todos/:id', async (req, res) => {
     try {
-        const {id}= req.params;
+        const { id } = req.params;
         const task = await Task.findByPk(id);
         res.json(task)
     } catch (error) {
@@ -60,7 +60,34 @@ app.get('/todos/:id', async (req, res)=>{
 })
 
 //PUT Para actualizar una tarea segun id 
+//PUT '/users' => path params
+//PATCH '/users/update' => query params se combinan los dos
+app.put('/todos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { body } = req;
+        const task = await Task.update(body, {
+            where: { id }
+        })
+        res.json(task)
+    } catch (error) {
+        res.status(400).json(error);
+    }
 
+})
+
+//DELETE TASK
+app.delete('/todos/:id', async (req,res)=>{
+    try {
+        const {id} = req.params;
+        await Task.destroy({
+            where: {id}
+        })
+        res.status(204).end();
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`Server running in PORT : ${PORT}`)
